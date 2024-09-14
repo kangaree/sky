@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Animation</title>
+  <style>
+    :root {
+      --s: 60s;
+      --dawn: #efc2ca;
+      --morning: #2998f1;
+      --afternoon: #ffe142;
+      --sunset: #fd6f43;
+      --evening: #6c44b9;
+      --night: #26195e;
+      --midnight: #09279b;
+    }
+
+    .container {
+      width: 100%;
+    }
+
+    .sky {
+      animation: rotate var(--s) linear infinite;
+      background: conic-gradient(var(--midnight), var(--night), var(--evening), var(--sunset), var(--afternoon), var(--morning), var(--dawn), var(--midnight));
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      left: -500vw;
+      margin-top: 250vh;
+      position: relative;
+      width: 1000vw;
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* general styling */
+    body {
+      align-items: center;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sky"></div>
+  </div>
+</body>
+</html>
