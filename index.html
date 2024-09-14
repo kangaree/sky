@@ -101,49 +101,58 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const button = document.querySelector('.toggle-button');
-      const sky = document.querySelector('.sky');
-      const stageElement = document.querySelector('.stage');
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.querySelector('.toggle-button');
+    const sky = document.querySelector('.sky');
+    const stageElement = document.querySelector('.stage');
 
-      const stages = ['Midnight', 'Dawn', 'Morning', 'Afternoon', 'Sunset', 'Evening', 'Night'];
+    const stages = ['Midnight', 'Dawn', 'Morning', 'Afternoon', 'Sunset', 'Evening', 'Night'];
 
-      button.addEventListener('click', () => {
-        if (sky.style.animationPlayState === 'paused') {
-          sky.style.animationPlayState = 'running';
-          button.textContent = 'Pause';
-        } else {
-          sky.style.animationPlayState = 'paused';
-          button.textContent = 'Play';
-        }
-      });
+    let isPaused = false;  // Track the pause state
+    let startTime = Date.now(); // Track the start time of the animation
+    let pauseTime = 0;  // Track the accumulated pause time
 
-      function updateStage() {
-        // Get the elapsed time in percentage
-        const computedStyle = getComputedStyle(sky);
-        const animationDuration = parseFloat(computedStyle.animationDuration);
-        const animationPlayState = computedStyle.animationPlayState;
-        const totalRotation = 360; // 360 degrees
-
-        // Get the current time
-        const now = new Date();
-        const elapsedTime = (now - startTime) / 1000; // in seconds
-        const elapsedPercentage = (elapsedTime % animationDuration) / animationDuration;
-        
-        // Calculate the current stage
-        const stageIndex = Math.floor(elapsedPercentage * stages.length);
-        stageElement.textContent = stages[stageIndex];
+    button.addEventListener('click', () => {
+      if (isPaused) {
+        sky.style.animationPlayState = 'running';
+        button.textContent = 'Pause';
+        startTime += (Date.now() - pauseTime);  // Adjust start time to compensate for pause
+        isPaused = false;
+      } else {
+        sky.style.animationPlayState = 'paused';
+        button.textContent = 'Play';
+        pauseTime = Date.now();  // Record the time when paused
+        isPaused = true;
       }
-
-      let startTime = new Date();
-
-      function update() {
-        updateStage();
-        requestAnimationFrame(update);
-      }
-
-      update();
     });
-  </script>
+
+    function updateStage() {
+      const computedStyle = getComputedStyle(sky);
+      const animationDuration = parseFloat(computedStyle.animationDuration);
+      const totalRotation = 360; // 360 degrees
+
+      // Calculate elapsed time
+      const now = Date.now();
+      const elapsedTime = now - startTime; // in milliseconds
+      const elapsedSeconds = (elapsedTime % (animationDuration * 1000)) / 1000; // in seconds
+      const elapsedPercentage = elapsedSeconds / animationDuration;
+      
+      // Calculate the current stage
+      const stageIndex = Math.floor(elapsedPercentage * stages.length);
+      stageElement.textContent = stages[stageIndex];
+    }
+
+    function update() {
+      // Update the stage only if the animation is not paused
+      if (!isPaused) {
+        updateStage();
+      }
+      requestAnimationFrame(update);
+    }
+
+    update();
+  });
+</script>
+
 </body>
 </html>
