@@ -6,7 +6,7 @@
   <title>Sky Animation</title>
   <style>
     :root {
-      --s: 60s;
+      --s: 60s; /* Duration of the animation */
       --dawn: #efc2ca;
       --morning: #2998f1;
       --afternoon: #ffe142;
@@ -23,7 +23,11 @@
 
     .sky {
       animation: rotate var(--s) linear infinite;
-      background: conic-gradient(var(--midnight), var(--night), var(--evening), var(--sunset), var(--afternoon), var(--morning), var(--dawn), var(--midnight));
+      background: conic-gradient(
+        var(--midnight), var(--night), var(--evening), 
+        var(--sunset), var(--afternoon), var(--morning),
+        var(--dawn), var(--midnight)
+      );
       aspect-ratio: 1 / 1;
       border-radius: 50%;
       left: -500vw;
@@ -42,7 +46,8 @@
     }
 
     body {
-      margin: 0
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
 
     .outer-container {
@@ -52,12 +57,13 @@
       justify-content: center;
       margin: 0;
       overflow: hidden;
+      position: relative;
     }
 
     .toggle-button {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      bottom: 10px;
+      right: 10px;
       padding: 10px 20px;
       background-color: #007bff;
       color: #fff;
@@ -71,20 +77,36 @@
     .toggle-button:hover {
       background-color: #0056b3;
     }
+
+    .stage {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 16px;
+      z-index: 2;
+    }
   </style>
 </head>
 <body>
   <button class="toggle-button">Pause</button>
+  <div class="stage">Dawn</div>
   <div class="outer-container">
-      <div class="container">
-        <div class="sky"></div>
-      </div>
+    <div class="container">
+      <div class="sky"></div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const button = document.querySelector('.toggle-button');
       const sky = document.querySelector('.sky');
+      const stageElement = document.querySelector('.stage');
+
+      const stages = ['Midnight', 'Dawn', 'Morning', 'Afternoon', 'Sunset', 'Evening', 'Night'];
 
       button.addEventListener('click', () => {
         if (sky.style.animationPlayState === 'paused') {
@@ -95,6 +117,32 @@
           button.textContent = 'Play';
         }
       });
+
+      function updateStage() {
+        // Get the elapsed time in percentage
+        const computedStyle = getComputedStyle(sky);
+        const animationDuration = parseFloat(computedStyle.animationDuration);
+        const animationPlayState = computedStyle.animationPlayState;
+        const totalRotation = 360; // 360 degrees
+
+        // Get the current time
+        const now = new Date();
+        const elapsedTime = (now - startTime) / 1000; // in seconds
+        const elapsedPercentage = (elapsedTime % animationDuration) / animationDuration;
+        
+        // Calculate the current stage
+        const stageIndex = Math.floor(elapsedPercentage * stages.length);
+        stageElement.textContent = stages[stageIndex];
+      }
+
+      let startTime = new Date();
+
+      function update() {
+        updateStage();
+        requestAnimationFrame(update);
+      }
+
+      update();
     });
   </script>
 </body>
