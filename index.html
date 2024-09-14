@@ -18,6 +18,7 @@
 
     .container {
       width: 100%;
+      position: relative;
     }
 
     .sky {
@@ -40,8 +41,11 @@
       }
     }
 
-    /* general styling */
     body {
+      margin: 0
+    }
+
+    .outer-container {
       align-items: center;
       display: flex;
       height: 100vh;
@@ -49,11 +53,49 @@
       margin: 0;
       overflow: hidden;
     }
+
+    .toggle-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 2;
+    }
+
+    .toggle-button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="sky"></div>
+  <button class="toggle-button">Pause</button>
+  <div class="outer-container">
+      <div class="container">
+        <div class="sky"></div>
+      </div>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const button = document.querySelector('.toggle-button');
+      const sky = document.querySelector('.sky');
+
+      button.addEventListener('click', () => {
+        if (sky.style.animationPlayState === 'paused') {
+          sky.style.animationPlayState = 'running';
+          button.textContent = 'Pause';
+        } else {
+          sky.style.animationPlayState = 'paused';
+          button.textContent = 'Play';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
